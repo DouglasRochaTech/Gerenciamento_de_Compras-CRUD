@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lista de Compras - CRUD</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 30px auto;
+    }
+
+    input,
+    button {
+      margin: 5px 0;
+      padding: 6px;
+      width: 100%;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Inclusão de Produtos!</h1>
+
+  <form id="userForm">
+    <input type="hidden" id="id" />
+    <input type="text" id="nome" placeholder="Nome" required />
+    <input type="text" id="descricao" placeholder="Descrição" required />
+    <input type="number" id="preco" placeholder="Preço" step="0.01" required />
+    <button type="submit">Salvar</button>
+  </form>
+
+  <h2>Lista de Produtos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Descrição</th>
+        <th>Preço</th>
+        <th>Data de Inclusão</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="userTable"></tbody>
+  </table>
+
+  <script>
+    const API_URL = "http://localhost:3000/produtos";
+
+    async function carregarProdutos() {
+      const res = await fetch(API_URL);
+      const produtos = await res.json();
+      const tabela = document.getElementById("userTable");
+      tabela.innerHTML = "";
+
+      produtos.forEach(produto => {
+        const preco = Number(produto.preco) || 0;
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${produto.nome}</td>
+          <td>${produto.descricao}</td>
+          <td>R$ ${preco.toFixed(2)}</td>
+          <td>${new Date(produto.data_inclusao).toLocaleDateString()}</td>
+          <td class="actions">
+            <button onclick="editarProduto(${produto.id})">Editar</button>
+            <button onclick="excluirProduto(${produto.id})">Excluir</button>
+          </td>
+        `;
+        tabela.appendChild(row);
+      });
+    }
+
+    async function salvarProduto(e) {
+      e.preventDefault();
+      const id = document.getElementById("id").value;
+      const data = {
+        nome: document.getElementById("nome").value,
+        descricao: document.getElementById("descricao").value,
+        preco: parseFloat(document.getElementById("preco").value),
+        data_inclusao: new Date().toISOString().slice(0, 19).replace('T', ' '),
+      };
+
+      const metodo = id ? "PUT" : "POST";
+      const url = id ? `${API_URL}/${id}` : API_URL;
+
+      await fetch(url, {
+        method: metodo,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      document.getElementById("userForm").reset();
+      carregarProdutos();
+    }
+
+    async function editarProduto(id) {
+      const res = await fetch(`${API_URL}/${id}`, { method: "GET" });
+      const produto = await res.json();
+
+      document.getElementById("id").value = id;
+      document.getElementById("nome").value = produto.nome;
+      document.getElementById("descricao").value = produto.descricao;
+      document.getElementById("preco").value = produto.preco;
+    }
+
+    async function excluirProduto(id) {
+      if (confirm("Deseja excluir este produto?")) {
+        await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+        carregarProdutos();
+      }
+    }
+
+    document.getElementById("userForm").addEventListener("submit", salvarProduto);
+    carregarProdutos();
+  </script>
+
+</body>
+</html>
