@@ -3,89 +3,153 @@
 <head>
   <meta charset="UTF-8" />
   <title>Lista de Compras - CRUD</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+
   <style>
+    /* === IMAGENS DECORATIVAS === */
+    .icone-canto {
+      position: absolute;
+      width: 70px;
+      z-index: 2;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .canto1 { top: 20px; left: 20px; }
+    .canto2 { top: 20px; right: 20px; }
+    .canto3 { bottom: 20px; left: 20px; }
+    .canto4 { bottom: 20px; right: 20px; }
+
+    /* === LAYOUT GERAL === */
     body {
       font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 30px 0;
+    }
+
+    .container {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       max-width: 600px;
-      margin: 30px auto;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
     }
 
-    input,
-    button {
-      margin: 5px 0;
-      padding: 6px;
+    /* === FORMULÁRIO === */
+    input, button {
+      margin: 8px 0;
+      padding: 10px;
       width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
     }
 
+    button[type="submit"] {
+      background-color: #28a745;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      transition: 0.3s;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #218838;
+      transform: scale(1.02);
+    }
+
+    /* === TABELA === */
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
     }
 
-    th,
-    td {
-      padding: 8px;
-      border: 1px solid #ccc;
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
       text-align: left;
     }
+
+    th { background-color: #f8f9fa; }
 
     .actions {
       display: flex;
       gap: 10px;
     }
+    .actions button {
+      width: auto;
+      padding: 5px 10px;
+    }
   </style>
 </head>
 <body>
 
-  <h1>Inclusão de Produtos!</h1>
+  <!-- IMAGENS DECORATIVAS -->
+  <img src="https://cdn-icons-png.flaticon.com/512/1170/1170576.png" class="icone-canto canto1">
+  <img src="https://cdn-icons-png.flaticon.com/512/8890/8890577.png" class="icone-canto canto2">
+  <img src="https://cdn-icons-png.flaticon.com/512/839/839860.png" class="icone-canto canto3">
+  <img src="https://cdn-icons-png.flaticon.com/512/891/891407.png" class="icone-canto canto4">
 
-  <form id="userForm">
-    <input type="hidden" id="id" />
-    <input type="text" id="nome" placeholder="Nome" required />
-    <input type="text" id="descricao" placeholder="Descrição" required />
-    <input type="number" id="preco" placeholder="Preço" step="0.01" required />
-    <button type="submit">Salvar</button>
-  </form>
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div class="container">
+    <h1>Inclusão de Produtos!</h1>
 
-  <h2>Lista de Produtos</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Descrição</th>
-        <th>Preço</th>
-        <th>Data de Inclusão</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody id="userTable"></tbody>
-  </table>
+    <form id="userForm">
+      <input type="hidden" id="id" />
+      <input type="text" id="nome" placeholder="Nome" required />
+      <input type="text" id="descricao" placeholder="Descrição" required />
+      <input type="number" id="preco" placeholder="Preço" step="0.01" required />
+      <button type="submit">Salvar</button>
+    </form>
+
+    <h2>Lista de Produtos</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Preço</th>
+          <th>Data de Inclusão</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="userTable"></tbody>
+    </table>
+  </div>
 
   <script>
     const API_URL = "http://localhost:3000/produtos";
 
     async function carregarProdutos() {
-      const res = await fetch(API_URL);
-      const produtos = await res.json();
-      const tabela = document.getElementById("userTable");
-      tabela.innerHTML = "";
+      try {
+        const res = await fetch(API_URL);
+        const produtos = await res.json();
+        const tabela = document.getElementById("userTable");
+        tabela.innerHTML = "";
 
-      produtos.forEach(produto => {
-        const preco = Number(produto.preco) || 0;
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${produto.nome}</td>
-          <td>${produto.descricao}</td>
-          <td>R$ ${preco.toFixed(2)}</td>
-          <td>${new Date(produto.data_inclusao).toLocaleDateString()}</td>
-          <td class="actions">
-            <button onclick="editarProduto(${produto.id})">Editar</button>
-            <button onclick="excluirProduto(${produto.id})">Excluir</button>
-          </td>
-        `;
-        tabela.appendChild(row);
-      });
+        produtos.forEach(produto => {
+          const preco = Number(produto.preco) || 0;
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${produto.nome}</td>
+            <td>${produto.descricao}</td>
+            <td>R$ ${preco.toFixed(2)}</td>
+            <td>${new Date(produto.data_inclusao).toLocaleDateString()}</td>
+            <td class="actions">
+              <button onclick="editarProduto(${produto.id})">Editar</button>
+              <button onclick="excluirProduto(${produto.id})">Excluir</button>
+            </td>
+          `;
+          tabela.appendChild(row);
+        });
+      } catch (error) {
+        console.log("API não encontrada");
+      }
     }
 
     async function salvarProduto(e) {
@@ -101,30 +165,41 @@
       const metodo = id ? "PUT" : "POST";
       const url = id ? `${API_URL}/${id}` : API_URL;
 
-      await fetch(url, {
-        method: metodo,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      try {
+        await fetch(url, {
+          method: metodo,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+      } catch (error) {
+        console.log("Erro ao salvar");
+      }
 
       document.getElementById("userForm").reset();
       carregarProdutos();
     }
 
     async function editarProduto(id) {
-      const res = await fetch(`${API_URL}/${id}`, { method: "GET" });
-      const produto = await res.json();
-
-      document.getElementById("id").value = id;
-      document.getElementById("nome").value = produto.nome;
-      document.getElementById("descricao").value = produto.descricao;
-      document.getElementById("preco").value = produto.preco;
+      try {
+        const res = await fetch(`${API_URL}/${id}`);
+        const produto = await res.json();
+        document.getElementById("id").value = id;
+        document.getElementById("nome").value = produto.nome;
+        document.getElementById("descricao").value = produto.descricao;
+        document.getElementById("preco").value = produto.preco;
+      } catch (error) {
+        alert("Erro ao editar");
+      }
     }
 
     async function excluirProduto(id) {
       if (confirm("Deseja excluir este produto?")) {
-        await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-        carregarProdutos();
+        try {
+          await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+          carregarProdutos();
+        } catch (error) {
+          alert("Erro ao excluir");
+        }
       }
     }
 
