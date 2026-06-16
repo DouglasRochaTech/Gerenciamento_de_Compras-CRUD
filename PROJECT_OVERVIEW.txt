@@ -1,0 +1,64 @@
+PROJECT OVERVIEW
+
+Este projeto é uma API simples de CRUD para produtos, escrita com Node.js, Express e MySQL.
+Ele usa o Knex para conectar ao banco de dados e executar migrations para criar a tabela `produtos`.
+
+Como o projeto funciona, de forma simples:
+
+1. `src/server.js`
+   - É o ponto de entrada do servidor.
+   - Configura o Express, habilita JSON e registra a rota `/produtos`.
+   - Serve o arquivo `public/index.html` na rota raiz.
+
+2. `src/routes/produtos.js`
+   - Define as rotas REST para produtos:
+     - `GET /produtos` lista todos os produtos.
+     - `GET /produtos/:id` busca um produto por ID.
+     - `POST /produtos` insere um produto novo.
+     - `PUT /produtos/:id` atualiza um produto.
+     - `DELETE /produtos/:id` exclui um produto.
+
+3. `src/controllers/produtosController.js`
+   - Contém a lógica de cada operação de produto.
+   - Usa o `db` do Knex para executar consultas no MySQL.
+   - Cada função trata erros e envia respostas JSON.
+
+4. `src/db/knex.js`
+   - Cria a conexão Knex com as configurações do `knexfile.js`.
+   - Exporta o objeto `db` usado pelo controller.
+
+5. `knexfile.js`
+   - Define as configurações do Knex para o ambiente de desenvolvimento.
+   - Informa qual cliente usar (`mysql2`), os dados de conexão e onde ficam as migrations.
+
+6. `src/db/migrations/20250604102542_criar_tabela_produto.js`
+   - É a migration que cria a tabela `produtos`.
+   - Define as colunas: `id`, `nome`, `descricao`, `preco` e `data_inclusao`.
+   - O `down()` remove a tabela se precisar reverter a migration.
+
+Principais scripts do projeto:
+
+- `npm install`
+  - Baixa todas as dependências necessárias para rodar o projeto.
+
+- `npm run dev`
+  - Inicia o servidor em modo de desenvolvimento usando `nodemon`.
+  - O servidor reinicia automaticamente quando os arquivos mudam.
+
+- `npm run migrate:latest`
+  - Executa todas as migrations ainda não aplicadas.
+  - Cria a tabela `produtos` no banco de dados configurado.
+
+- `npm run migrate:rollback`
+  - Desfaz a última migration executada.
+  - Serve para reverter mudanças na estrutura do banco quando necessário.
+
+Dependências principais usadas:
+
+- `express`: para criar o servidor web e as rotas.
+- `knex`: para construir consultas SQL e gerenciar migrations.
+- `mysql2`: para se conectar ao banco MySQL.
+
+Resumo:
+
+O servidor aceita requisições HTTP em `/produtos`, usa o Knex para falar com o MySQL e mantém a estrutura do banco através de migrations. O arquivo de entrada é `src/server.js`, as rotas estão em `src/routes/produtos.js` e a lógica está em `src/controllers/produtosController.js`.

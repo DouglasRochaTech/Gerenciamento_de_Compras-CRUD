@@ -1,11 +1,6 @@
-// antes de executar esta migration crie o banco de dados (schema) definido por DB_NAME manualmente no MySQL
-//
-// pode fazer isso executando o comando 
-// CREATE DATABASE <DB_NAME> IF NOT EXISTS;
-//
-// CASO não deseje usar migrations, na pasta banco-de-dados tem o script que pode ser importado para criar a base de dados facsenac
-//
- 
+// MIGRATION KNEX PARA CRIAR A TABELA PRODUTOS
+// USE "npm run migrate:latest" APÓS CRIAR O DATABASE DEFINIDO EM DB_NAME NO .env
+// KNEX GERENCIA O HISTÓRICO DE MIGRATIONS AUTOMATICAMENTE EM knex_migrations
 
 exports.up = function (knex) {
   return knex.schema.createTable('produtos', function (table) {
