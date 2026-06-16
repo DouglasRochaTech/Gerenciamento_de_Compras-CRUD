@@ -22,4 +22,10 @@ app.listen(PORT, () => {
 });
 
 // marcio araya
-// adaptaptado por Douglas Rocha Vasco, na cara de pau!!!
+// adaptado por Douglas Rocha Vasco, na cara de pau!!!
+
+//Ele gerencia o backend express da seguinte forma: 
+//Inicializa a aplicação;
+//Configura o middleware;
+//Gerencia a entrega do index.html;
+//Direciona as requisições!!!

@@ -18,3 +18,7 @@ module.exports = {
     }
   }
 };
+
+//Explica ao knex como se conectar ao MYSQL, e 
+//mapeia as pastas onde as ferramentas de Migrations
+//e Seeds ficarão guardadas!!!
