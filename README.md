@@ -46,8 +46,7 @@ Acesse `http://localhost:3000`.
 
 ## Equipe
 
-- Douglas Rocha
+- Douglas Rocha Vasco
 - Pedro Henrique Coelho Lima
-- Jonas
-- Calebe
-- Raphael
+- Jonas Santos Barbosa
+- Calebe Bezerra Feitosa
