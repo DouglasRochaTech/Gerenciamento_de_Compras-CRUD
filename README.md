@@ -47,7 +47,7 @@ Acesse `http://localhost:3000`.
 ## Equipe
 
 - Douglas Rocha
+- Pedro Henrique Coelho Lima
 - Jonas
 - Calebe
 - Raphael
-- Pedro Henrique Coelho Lima
